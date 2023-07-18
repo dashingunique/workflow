@@ -1,5 +1,5 @@
-import {Markable, MarkingStoreInterface} from "./Interfaces";
-import {Marking} from "./Marking";
+import {Markable, MarkingStoreInterface} from "../Interfaces";
+import {Marking} from "../Marking";
 
 export class MethodMarkingStore implements MarkingStoreInterface {
     private singleState: boolean = false;
@@ -25,11 +25,12 @@ export class MethodMarkingStore implements MarkingStoreInterface {
         let currentMarking: string[];
 
         if (this.singleState) {
-            marking.allPlaces().forEach((_, place) => {
-                currentMarking = [place];
-                return;
-            })
+            const firstPlace = marking.allPlaces().entries().next()[1];
+
+            currentMarking = [firstPlace];
         }
+
+        subject.setMarking(currentMarking, options);
     }
 
 }

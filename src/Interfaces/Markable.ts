@@ -5,5 +5,5 @@ export interface Markable {
 
     getMarking(): string | string[];
 
-    setMarking<T>(marking: Marking, callback: (...args: T[]) => void): void;
+    setMarking<T>(marking: string | string[], options?: T): void;
 }

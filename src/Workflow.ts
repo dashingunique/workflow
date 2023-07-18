@@ -5,4 +5,6 @@ export class Workflow {
     private definition: Definition;
 
     private markingStore: MarkingStoreInterface;
+
+
 }

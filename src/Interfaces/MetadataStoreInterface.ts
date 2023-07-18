@@ -1,11 +1,11 @@
 import {Transition} from "../Transition";
 
-export interface MetadataStoreInterface {
-    getWorkflowMetadata(): string[];
+type TransitionName<T extends Transition> = T extends Transition ? T['getName'] : string;
 
-    getPlaceMetadata(place: string): string[];
+export interface MetadataStoreInterface<Workflow, Places, Transitions extends Record<string, any>> {
+    getWorkflowMetadata(): Workflow;
 
-    getTransitionMetadata(transition: Transition): string[];
+    getPlaceMetadata<K extends keyof Places>(place: K): Places[K];
 
-    getMetadata<T>(key: string, subject?: string | Transition): T | undefined;
+    getTransitionMetadata<T extends Transition>(transition: T): Transitions[TransitionName<T>];
 }
