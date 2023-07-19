@@ -1,12 +1,11 @@
 import {MetadataStoreInterface} from "../Interfaces";
-import {Transition} from "../Transition";
 
 export class InMemoryMetadataStore<Workflow, Places, Transitions> implements MetadataStoreInterface<Workflow, Places, Transitions> {
-    private workflowMetadata?: Workflow;
+    private workflowMetadata: Workflow;
 
-    private placesMetadata?: Places;
+    private placesMetadata: Places;
 
-    private transitionsMetadata?: Transitions;
+    private transitionsMetadata: Transitions;
 
     constructor(
         workflowMetadata?: Workflow,
@@ -18,25 +17,27 @@ export class InMemoryMetadataStore<Workflow, Places, Transitions> implements Met
         this.transitionsMetadata = transitionsMetadata;
     }
 
-    getMetadata<T extends string | Transition, R>(key: string, subject?: T): R {
-        if (!subject) {
-            return this.getWorkflowMetadata()[key];
-        }
+    getPlaceMetadata<K extends keyof Places>(place: K): Places[K];
+    getPlaceMetadata<K extends keyof Places, L extends keyof Places[K]>(place: K, key: L): Places[K][L];
+    getPlaceMetadata<K extends keyof Places, L extends keyof Places[K]>(place: K, key?: L): Places[K] | Places[K][L] {
+        const metadata: Places[K] = this.placesMetadata[place];
 
-        const metadataBag = typeof subject === 'string' ? this.getPlaceMetadata(subject) : this.getTransitionMetadata(subject);
-
-        return metadataBag[key];
+        return key ? metadata[key] : metadata;
     }
 
-    getPlaceMetadata<R>(place: string): R {
-        return this.placesMetadata?.[place];
+    getTransitionMetadata<K extends keyof Transitions>(transition: K): Transitions[K];
+    getTransitionMetadata<K extends keyof Transitions, L extends keyof Transitions[K]>(transition: K, key: L): Transitions[K][L];
+    getTransitionMetadata<K extends keyof Transitions, L extends keyof Transitions[K]>(
+        transition: K, key?: L
+    ): Transitions[K] | Transitions[K][L] {
+        const metadata = this.transitionsMetadata[transition];
+
+        return key ? metadata[key] : metadata;
     }
 
-    getTransitionMetadata<R>(transition: Transition): R {
-        return this.transitionsMetadata?.[transition.getName()];
-    }
-
-    getWorkflowMetadata() {
-        return this.workflowMetadata;
+    getWorkflowMetadata(): Workflow;
+    getWorkflowMetadata<K extends keyof Workflow>(key: K): Workflow[K];
+    getWorkflowMetadata<K extends keyof Workflow>(key?: K): Workflow | Workflow[K] {
+        return key ? this.workflowMetadata[key] : this.workflowMetadata;
     }
 }
