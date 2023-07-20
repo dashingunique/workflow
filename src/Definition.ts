@@ -1,5 +1,6 @@
 import {Transition} from "./Transition";
 import {DefinitionInterface, MetadataStoreInterface} from "./Interfaces";
+import {InMemoryMetadataStore} from "./Metadata";
 
 export class Definition<Workflow, Places, Transitions> implements DefinitionInterface<Workflow, Places, Transitions> {
     private places: Set<string>;
@@ -13,12 +14,12 @@ export class Definition<Workflow, Places, Transitions> implements DefinitionInte
     constructor(
         places: Set<string>,
         transactions: Map<string, Transition>,
-        initialPlace?: string | string[],
-        store?: MetadataStoreInterface<Workflow, Places, Transitions>
+        metadataStore?: InMemoryMetadataStore<Workflow, Places, Transitions>,
+        initialPlace?: string | string[]
     ) {
         this.places = places;
         this.transitions = transactions;
-        this.metadataStore = store;
+        this.metadataStore = metadataStore;
         this.initialPlaceIsSet(initialPlace);
     }
 

@@ -3,6 +3,7 @@ import {Marking} from "../Marking";
 import {DefinitionInterface} from "./DefinitionInterface";
 import {MarkingStoreInterface} from "./MarkingStoreInterface";
 import {MetadataStoreInterface} from "./MetadataStoreInterface";
+import TransitionBlockerList from "../TransitionBlockerList";
 
 export interface WorkflowInterface<Workflow, Places, Transitions> {
     getName(): string;
@@ -11,7 +12,7 @@ export interface WorkflowInterface<Workflow, Places, Transitions> {
 
     can(subject: Markable, transitionName: string): boolean;
 
-    buildTransitionBlockerList(subject: Markable, transitionName: string): string[];
+    buildTransitionBlockerList(subject: Markable, transitionName: string): TransitionBlockerList;
 
     apply<T>(subject: Markable, transitionName: string, options?: T): Marking;
 
