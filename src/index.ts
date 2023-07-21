@@ -4,3 +4,6 @@ export * from './MarkingStore';
 export * from './Workflow';
 export * from './Metadata';
 export * from './Marking';
+export {TransitionOptions} from "./Types";
+export {WorkflowEventOptions} from "./Types";
+export {AuditTrailOptions} from "./Types";

@@ -1,0 +1,84 @@
+{
+  "workflows": [
+    {
+      "name": "order",
+      "description": "workflow1 description",
+      "type": "workflow",
+      "audit_trail": {
+        "enabled": true
+      },
+      "marking_store": {
+        "type": "method"
+      },
+      "initial_marking": "wait",
+      "places": [
+        "wait",
+        "paid",
+        "submitted",
+        "refunded",
+        "canceled",
+        "shipped",
+        "received"
+      ],
+      "transitions": [
+        {
+          "name": "to_pay",
+          "from": [
+            "wait",
+            "cancelled"
+          ],
+          "to": [
+            "paid"
+          ]
+        },
+        {
+          "name": "to_cancel",
+          "from": [
+            "wait"
+          ],
+          "to": [
+            "cancelled"
+          ]
+        },
+        {
+          "name": "to_submitted",
+          "from": [
+            "paid"
+          ],
+          "to": [
+            "submitted"
+          ]
+        },
+        {
+          "name": "to_refund",
+          "from": [
+            "paid",
+            "submitted",
+            "shipped"
+          ],
+          "to": [
+            "refunded"
+          ]
+        },
+        {
+          "name": "to_ship",
+          "from": [
+            "submitted"
+          ],
+          "to": [
+            "shipped"
+          ]
+        },
+        {
+          "name": "to_receive",
+          "from": [
+            "shipped"
+          ],
+          "to": [
+            "received"
+          ]
+        }
+      ]
+    }
+  ]
+}

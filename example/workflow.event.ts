@@ -1,4 +1,11 @@
-import {InMemoryMetadataStore, Markable, Marking, MethodMarkingStore, Workflow, WorkflowEvent} from "../src";
+import {
+    InMemoryMetadataStore,
+    Markable,
+    Marking,
+    MethodMarkingStore,
+    Workflow,
+    WorkflowEvent
+} from "../src";
 import {Definition} from "../src/Definition";
 import {Transition} from "../src/Transition";
 

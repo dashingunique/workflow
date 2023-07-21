@@ -1,0 +1,46 @@
+workflows:
+  order_submitted:
+    type: 'workflow'
+    audit_trail:
+      enabled: true
+    marking_store:
+      type: 'method'
+    supports:
+      - App\Entity\BlogPost
+    initial_marking: wait
+    places:
+      - wait
+      - submitted
+      - paid
+      - refunded
+      - cancelled
+    transitions:
+      to_pay:
+        from:
+          - wait
+          - cancelled
+        to:
+          - submitted
+      to_submit:
+        from:
+          - paid
+        to:
+          - submitted
+      to_refund:
+        from:
+          - paid
+          - submitted
+        to:
+          - refunded
+      to_cancel:
+        from:
+          - wait
+        to:
+          - cancelled
+    events:
+      guard:
+        - name: 'workflow_order_submitted_guard'
+          listener:
+            - 'App\Workflow\Guard\OrderSubmittedGuard'
+            -
+          arguments: ['@security.authorization_checker']

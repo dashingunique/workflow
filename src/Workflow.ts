@@ -3,17 +3,18 @@ import {Markable, MarkingStoreInterface, MetadataStoreInterface, WorkflowInterfa
 import {Marking} from "./Marking";
 import {Transition} from "./Transition";
 import TransitionBlockerList from "./TransitionBlockerList";
-import mitt, {Emitter, EventType} from 'mitt'
-import {WorkflowEvents} from "./WorkflowEvents";
+import {Emitter, EventType} from 'mitt'
+import {TransitionEvent} from "./Events";
+import {WorkflowEventTypes} from "./Types";
 
-export class Workflow<Workflow, Places, Transitions, Events extends Record<EventType, unknown>> implements WorkflowInterface<Workflow, Places, Transitions> {
+export class Workflow<Workflow, Places, Transitions> implements WorkflowInterface<Workflow, Places, Transitions> {
     private definition: Definition<Workflow, Places, Transitions>;
 
     private markingStore: MarkingStoreInterface;
 
     private name: string;
 
-    private eventDispatcher?: Emitter<Events>;
+    private eventDispatcher?: Emitter<Record<EventType, unknown>>;
 
     private eventsToDispatch?: string[];
 
@@ -21,13 +22,13 @@ export class Workflow<Workflow, Places, Transitions, Events extends Record<Event
         definition: Definition<Workflow, Places, Transitions>,
         markingStore: MarkingStoreInterface,
         name: string = 'unnamed',
-        eventDispatcher?: Emitter<Events>,
+        eventDispatcher?: Emitter<Record<EventType, unknown>>,
         eventsToDispatch?: string[]
     ) {
         this.definition = definition;
         this.markingStore = markingStore;
         this.name = name;
-        this.eventDispatcher = eventDispatcher || mitt<Events>();
+        this.eventDispatcher = eventDispatcher;
         this.eventsToDispatch = eventsToDispatch;
     }
 
@@ -109,7 +110,7 @@ export class Workflow<Workflow, Places, Transitions, Events extends Record<Event
     }
 
 
-    apply<T>(subject: Markable, transitionName: string, options?: T): Marking {
+    apply<Options>(subject: Markable, transitionName: string, options?: Options): Marking {
         const marking = this.getMarking(subject);
 
         const transition = this.definition.getTransitions().get(transitionName);
@@ -160,11 +161,13 @@ export class Workflow<Workflow, Places, Transitions, Events extends Record<Event
     }
 
     private transition<T>(subject: Markable, transition: Transition, marking: Marking, options?: T): T {
-        if (!this.shouldDispatchEvent(WorkflowEvents.TRANSITION, options)) {
+        if (!this.shouldDispatchEvent(WorkflowEventTypes.TRANSITION, options)) {
             return options;
         }
 
-        
+        const event = new TransitionEvent(this, subject, marking, transition, options);
+
+        this.eventDispatcher.emit(WorkflowEventTypes.TRANSITION, event);
     }
 
     private enter<T>(subject: Markable, marking: Marking, transition: Transition, currentOptions: T) {
@@ -179,7 +182,7 @@ export class Workflow<Workflow, Places, Transitions, Events extends Record<Event
         return;
     }
 
-    private shouldDispatchEvent<T>(name: keyof Events, options: T): boolean {
+    private shouldDispatchEvent<T>(name: string, options: T): boolean {
         if (!this.eventDispatcher) {
             return false;
         }
@@ -188,6 +191,6 @@ export class Workflow<Workflow, Places, Transitions, Events extends Record<Event
             return false;
         }
 
-        return this.eventsToDispatch && !this.eventsToDispatch?.includes(name as string);
+        return this.eventsToDispatch && !this.eventsToDispatch?.includes(name);
     }
 }

@@ -3,3 +3,4 @@ export * from './Markable';
 export * from './MarkingStoreInterface';
 export * from './MetadataStoreInterface';
 export * from './WorkflowInterface';
+export * from './WorkflowProviderInterface';

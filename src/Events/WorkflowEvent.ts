@@ -4,29 +4,20 @@ import {Transition} from "../Transition";
 
 export type TransitionName<T extends Transition, Transitions> = T['getName'] extends keyof Transitions[keyof Transitions] ? T['getName'] : never;
 
-export class WorkflowEvent<Workflow, Places, Transitions> {
-    private workflow: WorkflowInterface<Workflow, Places, Transitions>
+export class WorkflowEvent<Workflow, Places, Transitions, Options> {
+    readonly workflow: WorkflowInterface<Workflow, Places, Transitions>
 
-    private subject: Markable;
+    readonly subject: Markable;
 
-    private marking: Marking;
+    readonly marking: Marking;
 
-    constructor(workflow: WorkflowInterface<Workflow, Places, Transitions>, subject: Markable, making: Marking) {
+    readonly options?: Options;
+
+    constructor(workflow: WorkflowInterface<Workflow, Places, Transitions>, subject: Markable, making: Marking, options?: Options) {
         this.workflow = workflow;
         this.subject = subject;
         this.marking = making;
-    }
-
-    getWorkflow(): WorkflowInterface<Workflow, Places, Transitions> {
-        return this.workflow;
-    }
-
-    getSubject(): Markable {
-        return this.subject;
-    }
-
-    getMarking(): Marking {
-        return this.marking;
+        this.options = options;
     }
 
     getMetadata<T extends keyof Workflow>(key: T): Workflow[T];
